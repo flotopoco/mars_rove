@@ -22,4 +22,8 @@ public class CardinalDirections {
     public static String getWEST() {
         return WEST;
     }
+
+    public static boolean isCardinalDirection(String aux){
+        return (aux != null && (aux.equals(WEST) || aux.equals(EAST) || aux.equals(SOUTH) || aux.equals(NORTH)));
+    }
 }

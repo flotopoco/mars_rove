@@ -2,6 +2,7 @@ package com.marsrover.marsrover.controller;
 
 import com.marsrover.marsrover.model.Rover;
 import com.marsrover.marsrover.model.marsMap;
+import com.marsrover.marsrover.utils.CardinalDirections;
 import com.marsrover.marsrover.utils.Utils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,16 +15,26 @@ public class MarsRoverController {
 
     @GetMapping("/execute")
     public String execute(@RequestParam(value = "command", defaultValue = "Command Null") String command,
-                           @RequestParam(value = "worldsize", defaultValue = "0") int sizeWorld,
+                           @RequestParam(value = "worldsize", defaultValue = "2") int sizeWorld,
                            @RequestParam(value = "roadBlockCount", defaultValue = "0") int roadBlockCount,
                            @RequestParam(value = "initialPosX", defaultValue = "0") int initialPosX,
                            @RequestParam(value = "initialPosY", defaultValue = "0") int initialPosY,
                            @RequestParam(value = "facing", defaultValue = "NORTH") String facing) {
 
         //create the map with size and roadblocks
+        if (sizeWorld <2){
+            sizeWorld = 2;
+        }
         marsMap map = new marsMap(sizeWorld);
         map.buildRoadBlocks(roadBlockCount, sizeWorld);
 
+        if (initialPosX<0 || initialPosX>=sizeWorld){
+            initialPosX=0;
+        }
+        if (initialPosY<0 || initialPosY>=sizeWorld){
+            initialPosY=0;
+        }
+        facing = (CardinalDirections.isCardinalDirection(facing))?facing:CardinalDirections.getNORTH();
         Rover rover = new Rover(initialPosX, initialPosY, facing);
         StringBuilder result = new StringBuilder("<html><head><style>"+
                 "body {background-color: lightblue;}h1 {color: black;text-align: center;}tit{color: #622569;} error{color: red;}"+
