@@ -1,10 +1,13 @@
 package com.marsrover.marsrover;
 
+import com.marsrover.marsrover.service.ReceiveInstructions;
 import com.marsrover.marsrover.utils.CardinalDirections;
 import com.marsrover.marsrover.utils.Utils;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.hamcrest.CoreMatchers.containsString;
+
 
 import com.marsrover.marsrover.model.*;
 
@@ -17,12 +20,12 @@ import static org.hamcrest.core.Is.is;
 class MarsroverApplicationTests {
 
 	private Rover rover;
-	private marsMap mars;
+	private MarsMap mars;
 
 	@Before
 	public void initialise(){
 		rover = new Rover(0,0,CardinalDirections.getNORTH());
-		mars = new marsMap(6);
+		mars = new MarsMap(6);
 	}
 
 	//Test for analize command
@@ -104,6 +107,21 @@ class MarsroverApplicationTests {
 		assertThat(rover.getFacing(),is(CardinalDirections.getSOUTH()));
 		rover.executeCommand("",mars);
 		assertThat(rover.getFacing(),is(CardinalDirections.getSOUTH()));
+	}
+
+	//test for service
+	@Test
+	public void testServiceReceiveInstructions(){
+		initialise();
+		ReceiveInstructions receiveInstructions = new ReceiveInstructions();
+		receiveInstructions.startProcess(rover,mars,"FFF");
+		assertThat(receiveInstructions.getResult(),containsString("Command sent to rover"));
+		receiveInstructions.startProcess(rover,mars,"FgFF");
+		assertThat(receiveInstructions.getResult(),containsString("Invalid Command"));
+		receiveInstructions.startProcess(rover,mars,"Command Null");
+		assertThat(receiveInstructions.getResult(),containsString("Command Null"));
+
+
 	}
 
 }
